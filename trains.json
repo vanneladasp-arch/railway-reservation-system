@@ -1,0 +1,19 @@
+[ {
+  "trainNumber" : 101,
+  "trainName" : "Express",
+  "source" : "Hyderabad",
+  "destination" : "Chennai",
+  "availableSeats" : 100
+}, {
+  "trainNumber" : 102,
+  "trainName" : "Superfast",
+  "source" : "Vijayawada",
+  "destination" : "Bengaluru",
+  "availableSeats" : 80
+}, {
+  "trainNumber" : 123,
+  "trainName" : "express",
+  "source" : "bca",
+  "destination" : "hyd",
+  "availableSeats" : 50
+} ]

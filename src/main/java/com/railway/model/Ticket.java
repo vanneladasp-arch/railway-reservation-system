@@ -4,23 +4,30 @@ package com.railway.model;
 public class Ticket {
 
     private int ticketId;
-    private Passenger passenger;
-    private Train train;
-    private int seatsBooked;
+    private int trainNumber;
+    private int passengerId;
+    private String passengerName;
+    private String seatNumber;
     private double fare;
 
+    // Default Constructor
     public Ticket() {
     }
 
-    public Ticket(int ticketId, Passenger passenger,
-                  Train train, int seatsBooked, double fare) {
+    // Parameterized Constructor
+    public Ticket(int ticketId, int trainNumber,
+                  int passengerId, String passengerName,
+                  String seatNumber, double fare) {
+
         this.ticketId = ticketId;
-        this.passenger = passenger;
-        this.train = train;
-        this.seatsBooked = seatsBooked;
+        this.trainNumber = trainNumber;
+        this.passengerId = passengerId;
+        this.passengerName = passengerName;
+        this.seatNumber = seatNumber;
         this.fare = fare;
     }
 
+    // Getters and Setters
     public int getTicketId() {
         return ticketId;
     }
@@ -29,28 +36,36 @@ public class Ticket {
         this.ticketId = ticketId;
     }
 
-    public Passenger getPassenger() {
-        return passenger;
+    public int getTrainNumber() {
+        return trainNumber;
     }
 
-    public void setPassenger(Passenger passenger) {
-        this.passenger = passenger;
+    public void setTrainNumber(int trainNumber) {
+        this.trainNumber = trainNumber;
     }
 
-    public Train getTrain() {
-        return train;
+    public int getPassengerId() {
+        return passengerId;
     }
 
-    public void setTrain(Train train) {
-        this.train = train;
+    public void setPassengerId(int passengerId) {
+        this.passengerId = passengerId;
     }
 
-    public int getSeatsBooked() {
-        return seatsBooked;
+    public String getPassengerName() {
+        return passengerName;
     }
 
-    public void setSeatsBooked(int seatsBooked) {
-        this.seatsBooked = seatsBooked;
+    public void setPassengerName(String passengerName) {
+        this.passengerName = passengerName;
+    }
+
+    public String getSeatNumber() {
+        return seatNumber;
+    }
+
+    public void setSeatNumber(String seatNumber) {
+        this.seatNumber = seatNumber;
     }
 
     public double getFare() {
@@ -61,12 +76,16 @@ public class Ticket {
         this.fare = fare;
     }
 
+    // Display Ticket Details
     @Override
     public String toString() {
-        return "Ticket ID: " + ticketId
-                + ", Passenger: " + passenger.getPassengerName()
-                + ", Train: " + train.getTrainName()
-                + ", Seats: " + seatsBooked
-                + ", Fare: " + fare;
+
+        return "\n===== TICKET DETAILS ====="
+                + "\nTicket ID: " + ticketId
+                + "\nTrain Number: " + trainNumber
+                + "\nPassenger ID: " + passengerId
+                + "\nPassenger Name: " + passengerName
+                + "\nSeat Number: " + seatNumber
+                + "\nFare: Rs. " + fare;
     }
 }

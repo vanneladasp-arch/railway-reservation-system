@@ -2,90 +2,142 @@
 package com.railway.service;
 
 import com.railway.model.Passenger;
-import com.railway.model.Ticket;
 import com.railway.model.Train;
+import com.railway.model.Seat;
+import com.railway.model.Ticket;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ReservationService {
 
-    private final List<Ticket> tickets = new ArrayList<>();
+    private List<Ticket> tickets = new ArrayList<>();
+
+    private Map<Integer, Seat> bookedSeatObjects = new HashMap<>();
+    private Map<Integer, Train> bookedTrains = new HashMap<>();
+
     private int nextTicketId = 1;
 
-    // Book a ticket
-    public synchronized Ticket bookTicket(
-            Train train,
-            Passenger passenger,
-            int seatsBooked,
-            double fare) {
+    // Book Ticket
+    public Ticket bookTicket(Train train, Passenger passenger, Seat seat) {
 
-        if (train == null || passenger == null) {
-            System.out.println("Train and passenger are required.");
+        if (train == null || passenger == null || seat == null) {
+            System.out.println("Invalid booking details!");
             return null;
         }
 
-        if (seatsBooked <= 0 || fare < 0) {
-            System.out.println("Invalid number of seats or fare.");
+        String seatNumber = seat.getSeatNumber();
+
+        if (seatNumber == null || seatNumber.isEmpty()) {
+            System.out.println("Invalid seat number!");
             return null;
         }
+
+        if (seat.isBooked() || train.isSeatBooked(seatNumber)) {
+            System.out.println("Seat already booked!");
+            return null;
+        }
+
+        // Book Seat
+        train.bookSeat(seatNumber);
+        seat.setBooked(true);
+
+        // Create Ticket
+        int ticketId = nextTicketId++;
 
         Ticket ticket = new Ticket(
-                nextTicketId++,
-                passenger,
-                train,
-                seatsBooked,
-                fare
+                ticketId,
+                train.getTrainNumber(),
+                passenger.getPassengerId(),
+                passenger.getPassengerName(),
+                seatNumber,
+                train.getFare()
         );
 
         tickets.add(ticket);
 
-        System.out.println("Ticket booked successfully!");
+        bookedSeatObjects.put(ticketId, seat);
+        bookedTrains.put(ticketId, train);
+
+        System.out.println("\nTicket booked successfully!");
         System.out.println(ticket);
 
         return ticket;
     }
 
-    // Display all tickets
-    public synchronized void viewAllTickets() {
+    // Cancel Ticket
+    public boolean cancelTicket(int ticketId) {
+
+        for (int i = 0; i < tickets.size(); i++) {
+
+            Ticket ticket = tickets.get(i);
+
+            if (ticket.getTicketId() == ticketId) {
+
+                Train train = bookedTrains.get(ticketId);
+                Seat seat = bookedSeatObjects.get(ticketId);
+
+                // Release Seat
+                if (train != null) {
+                    train.cancelSeat(ticket.getSeatNumber());
+                }
+
+                if (seat != null) {
+                    seat.setBooked(false);
+                }
+
+                tickets.remove(i);
+
+                bookedTrains.remove(ticketId);
+                bookedSeatObjects.remove(ticketId);
+
+                System.out.println("Ticket cancelled successfully!");
+                return true;
+            }
+        }
+
+        System.out.println("Ticket not found!");
+        return false;
+    }
+
+    // Search Ticket
+    public Ticket searchTicket(int ticketId) {
+
+        for (Ticket ticket : tickets) {
+
+            if (ticket.getTicketId() == ticketId) {
+                return ticket;
+            }
+        }
+
+        System.out.println("Ticket not found!");
+        return null;
+    }
+
+    // Display All Tickets
+    public void displayTickets() {
 
         if (tickets.isEmpty()) {
-            System.out.println("No tickets available.");
+            System.out.println("No tickets available!");
             return;
         }
 
-        System.out.println("\n===== ALL TICKETS =====");
+        System.out.println("\n===== ALL BOOKED TICKETS =====");
 
         for (Ticket ticket : tickets) {
             System.out.println(ticket);
         }
     }
 
-    // Cancel a ticket using its integer ID
-    public synchronized void cancelTicket(int ticketId) {
-
-        Iterator<Ticket> iterator = tickets.iterator();
-
-        while (iterator.hasNext()) {
-
-            Ticket ticket = iterator.next();
-
-            if (ticket.getTicketId() == ticketId) {
-                iterator.remove();
-
-                System.out.println(
-                        "Ticket " + ticketId + " cancelled successfully."
-                );
-                return;
-            }
-        }
-
-        System.out.println("Ticket not found: " + ticketId);
+    // Get All Tickets
+    public List<Ticket> getAllTickets() {
+        return new ArrayList<>(tickets);
     }
 
-    // Get the number of active tickets
-    public synchronized int getTicketCount() {
+    // Get Total Bookings
+    public int getTotalBookings() {
         return tickets.size();
     }
 }

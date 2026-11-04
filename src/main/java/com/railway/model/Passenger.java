@@ -1,4 +1,3 @@
-
 package com.railway.model;
 
 public class Passenger {
@@ -6,19 +5,14 @@ public class Passenger {
     private int passengerId;
     private String passengerName;
     private int age;
-    private String gender;
 
-    // Default constructor
     public Passenger() {
     }
 
-    // Parameterized constructor
-    public Passenger(int passengerId, String passengerName,
-                     int age, String gender) {
+    public Passenger(int passengerId, String passengerName, int age) {
         this.passengerId = passengerId;
         this.passengerName = passengerName;
         this.age = age;
-        this.gender = gender;
     }
 
     public int getPassengerId() {
@@ -45,19 +39,10 @@ public class Passenger {
         this.age = age;
     }
 
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
     @Override
     public String toString() {
         return "Passenger ID: " + passengerId
-                + ", Name: " + passengerName
-                + ", Age: " + age
-                + ", Gender: " + gender;
+                + "\nPassenger Name: " + passengerName
+                + "\nAge: " + age;
     }
 }

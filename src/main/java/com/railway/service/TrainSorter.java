@@ -2,46 +2,43 @@
 package com.railway.service;
 
 import com.railway.model.Train;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class TrainSorter {
 
     // Sort trains by train number
-    public static List<Train> sortByTrainNumber(List<Train> trains) {
+    public void sortByTrainNumber(List<Train> trains) {
 
-        List<Train> sortedTrains = new ArrayList<>(trains);
+        Collections.sort(trains,
+            Comparator.comparingInt(Train::getTrainNumber));
 
-        sortedTrains.sort(
-                Comparator.comparingInt(Train::getTrainNumber)
-        );
-
-        return sortedTrains;
+        System.out.println("Trains sorted by train number!");
     }
 
-    // Sort trains alphabetically by train name
-    public static List<Train> sortByTrainName(List<Train> trains) {
+    // Sort trains by train name
+    public void sortByTrainName(List<Train> trains) {
 
-        List<Train> sortedTrains = new ArrayList<>(trains);
+        Collections.sort(trains,
+            Comparator.comparing(Train::getTrainName));
 
-        sortedTrains.sort(
-                Comparator.comparing(
-                        Train::getTrainName,
-                        String.CASE_INSENSITIVE_ORDER
-                )
-        );
+        System.out.println("Trains sorted by train name!");
+    }
 
-        return sortedTrains;
+    // Sort trains by fare
+    public void sortByFare(List<Train> trains) {
+
+        Collections.sort(trains,
+            Comparator.comparingDouble(Train::getFare));
+
+        System.out.println("Trains sorted by fare!");
     }
 
     // Display sorted trains
-    public static void displayTrains(List<Train> trains) {
+    public void displaySortedTrains(List<Train> trains) {
 
-        if (trains == null || trains.isEmpty()) {
-            System.out.println("No trains available.");
-            return;
-        }
+        System.out.println("\n----- SORTED TRAIN DETAILS -----");
 
         for (Train train : trains) {
             System.out.println(train);

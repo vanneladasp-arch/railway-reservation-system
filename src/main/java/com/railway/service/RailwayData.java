@@ -1,97 +1,118 @@
 
 package com.railway.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import com.railway.model.Passenger;
 import com.railway.model.Train;
+import com.railway.model.Passenger;
+import com.railway.model.Ticket;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RailwayData {
 
-    // Store trains using train number
-    private Map<Integer, Train> trainMap = new HashMap<>();
-
-    // Store passengers using passenger ID
-    private Map<Integer, Passenger> passengerMap = new HashMap<>();
-
-    // Store unique train numbers
-    private Set<Integer> trainIds = new HashSet<>();
+    private List<Train> trains = new ArrayList<>();
+    private List<Passenger> passengers = new ArrayList<>();
+    private List<Ticket> tickets = new ArrayList<>();
 
     // Add Train
     public void addTrain(Train train) {
-        trainMap.put(train.getTrainNumber(), train);
-        trainIds.add(train.getTrainNumber());
-
-        System.out.println("Train added to collection.");
+        if (train != null) {
+            trains.add(train);
+            System.out.println("Train added successfully!");
+        }
     }
 
     // Add Passenger
     public void addPassenger(Passenger passenger) {
-        passengerMap.put(passenger.getPassengerId(), passenger);
+        if (passenger != null) {
+            passengers.add(passenger);
+            System.out.println("Passenger added successfully!");
+        }
+    }
 
-        System.out.println("Passenger added to collection.");
+    // Add Ticket
+    public void addTicket(Ticket ticket) {
+        if (ticket != null) {
+            tickets.add(ticket);
+            System.out.println("Ticket added successfully!");
+        }
+    }
+
+    // Get All Trains
+    public List<Train> getTrains() {
+        return trains;
+    }
+
+    // Get All Passengers
+    public List<Passenger> getPassengers() {
+        return passengers;
+    }
+
+    // Get All Tickets
+    public List<Ticket> getTickets() {
+        return tickets;
     }
 
     // Find Train
     public Train findTrain(int trainNumber) {
-        return trainMap.get(trainNumber);
+        for (Train train : trains) {
+            if (train.getTrainNumber() == trainNumber) {
+                return train;
+            }
+        }
+        return null;
     }
 
     // Find Passenger
     public Passenger findPassenger(int passengerId) {
-        return passengerMap.get(passengerId);
+        for (Passenger passenger : passengers) {
+            if (passenger.getPassengerId() == passengerId) {
+                return passenger;
+            }
+        }
+        return null;
     }
 
-    // View all trains
-    public void viewAllTrains() {
-        if (trainMap.isEmpty()) {
-            System.out.println("No trains available.");
-            return;
+    // Find Ticket
+    public Ticket findTicket(int ticketId) {
+        for (Ticket ticket : tickets) {
+            if (ticket.getTicketId() == ticketId) {
+                return ticket;
+            }
+        }
+        return null;
+    }
+
+    // Remove Ticket
+    public boolean removeTicket(int ticketId) {
+        Ticket ticket = findTicket(ticketId);
+
+        if (ticket != null) {
+            tickets.remove(ticket);
+            System.out.println("Ticket removed successfully!");
+            return true;
         }
 
-        System.out.println("\n===== ALL TRAINS =====");
+        System.out.println("Ticket not found!");
+        return false;
+    }
 
-        for (Train train : trainMap.values()) {
+    // Display All Data
+    public void displayAllData() {
+
+        System.out.println("\n===== TRAINS =====");
+        for (Train train : trains) {
             System.out.println(train);
         }
-    }
 
-    // View all passengers
-    public void viewAllPassengers() {
-        if (passengerMap.isEmpty()) {
-            System.out.println("No passengers available.");
-            return;
-        }
-
-        System.out.println("\n===== ALL PASSENGERS =====");
-
-        for (Passenger passenger : passengerMap.values()) {
+        System.out.println("\n===== PASSENGERS =====");
+        for (Passenger passenger : passengers) {
             System.out.println(passenger);
         }
-    }
 
-    // Get train list
-    public List<Train> getTrainList() {
-        return new ArrayList<>(trainMap.values());
-    }
-
-    // Get passenger list
-    public List<Passenger> getPassengerList() {
-        return new ArrayList<>(passengerMap.values());
-    }
-
-    // Get number of trains
-    public int getTrainCount() {
-        return trainMap.size();
-    }
-
-    // Get number of passengers
-    public int getPassengerCount() {
-        return passengerMap.size();
+        System.out.println("\n===== TICKETS =====");
+        for (Ticket ticket : tickets) {
+            System.out.println(ticket);
+        }
     }
 }

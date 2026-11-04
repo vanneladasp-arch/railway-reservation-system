@@ -1,20 +1,28 @@
+
 package com.railway;
 
 import com.railway.model.Passenger;
 import com.railway.model.Train;
-import com.railway.service.RailwayService;
+import com.railway.model.Seat;
+import com.railway.model.Ticket;
+import com.railway.service.ReservationService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
+    static Scanner sc = new Scanner(System.in);
+
+    static List<Train> trains = new ArrayList<>();
+
+    static List<Passenger> passengers = new ArrayList<>();
+
+    static ReservationService reservationService =
+            new ReservationService();
+
     public static void main(String[] args) {
-
-        Scanner sc = new Scanner(System.in);
-        RailwayService service = new RailwayService();
-
-        // Load previously saved data
-        service.loadData();
 
         boolean running = true;
 
@@ -22,156 +30,246 @@ public class Main {
 
             System.out.println("\n===== RAILWAY RESERVATION SYSTEM =====");
             System.out.println("1. Add Train");
-            System.out.println("2. Display All Trains");
-            System.out.println("3. Search Train");
-            System.out.println("4. Add Passenger");
-            System.out.println("5. Display Passengers");
-            System.out.println("6. Book Ticket");
-            System.out.println("7. Cancel Ticket");
-            System.out.println("8. Display Tickets");
-            System.out.println("9. Sort Trains By Name");
-            System.out.println("10. Save Data");
-            System.out.println("0. Save and Exit");
+            System.out.println("2. View Trains");
+            System.out.println("3. Register Passenger");
+            System.out.println("4. View Passengers");
+            System.out.println("5. Book Ticket");
+            System.out.println("6. Cancel Ticket");
+            System.out.println("7. Search Ticket");
+            System.out.println("8. View All Tickets");
+            System.out.println("9. Total Bookings");
+            System.out.println("10. Exit");
+
             System.out.print("Enter your choice: ");
-
-            int choice;
-
-            try {
-                choice = sc.nextInt();
-            } catch (java.util.InputMismatchException e) {
-                System.out.println("Please enter a valid number.");
-                sc.nextLine();
-                continue;
-            }
+            int choice = sc.nextInt();
+            sc.nextLine();
 
             switch (choice) {
 
-                case 1: {
-                    System.out.print("Train number: ");
-                    int number = sc.nextInt();
-                    sc.nextLine();
-
-                    System.out.print("Train name: ");
-                    String name = sc.nextLine();
-
-                    System.out.print("Source: ");
-                    String source = sc.nextLine();
-
-                    System.out.print("Destination: ");
-                    String destination = sc.nextLine();
-
-                    System.out.print("Available seats: ");
-                    int seats = sc.nextInt();
-
-                    if (number <= 0 || seats < 0) {
-                        System.out.println(
-                                "Train number must be positive and seats cannot be negative.");
-                        break;
-                    }
-
-                    service.addTrain(new Train(
-                            number, name, source, destination, seats));
+                case 1:
+                    addTrain();
                     break;
-                }
 
                 case 2:
-                    service.displayAllTrains();
+                    viewTrains();
                     break;
 
-                case 3: {
-                    System.out.print("Enter train number: ");
-                    int searchNumber = sc.nextInt();
-
-                    Train found = service.findTrain(searchNumber);
-
-                    if (found != null) {
-                        System.out.println(found);
-                    } else {
-                        System.out.println("Train not found.");
-                    }
+                case 3:
+                    registerPassenger();
                     break;
-                }
 
-                case 4: {
-                    System.out.print("Passenger ID: ");
-                    int passengerId = sc.nextInt();
-                    sc.nextLine();
-
-                    System.out.print("Passenger name: ");
-                    String passengerName = sc.nextLine();
-
-                    System.out.print("Age: ");
-                    int age = sc.nextInt();
-                    sc.nextLine();
-
-                    System.out.print("Gender: ");
-                    String gender = sc.nextLine();
-
-                    if (passengerId <= 0 || age < 0) {
-                        System.out.println(
-                                "Passenger ID must be positive and age cannot be negative.");
-                        break;
-                    }
-
-                    service.addPassenger(new Passenger(
-                            passengerId, passengerName, age, gender));
+                case 4:
+                    viewPassengers();
                     break;
-                }
 
                 case 5:
-                    service.displayAllPassengers();
+                    bookTicket();
                     break;
 
-                case 6: {
-                    System.out.print("Passenger ID: ");
-                    int pId = sc.nextInt();
-
-                    System.out.print("Train number: ");
-                    int trainNumber = sc.nextInt();
-
-                    System.out.print("Number of seats: ");
-                    int bookedSeats = sc.nextInt();
-
-                    System.out.print("Total fare: ");
-                    double fare = sc.nextDouble();
-
-                    service.bookTicket(
-                            pId, trainNumber, bookedSeats, fare);
+                case 6:
+                    cancelTicket();
                     break;
-                }
 
-                case 7: {
-                    System.out.print("Ticket ID to cancel: ");
-                    int ticketId = sc.nextInt();
-
-                    service.cancelTicket(ticketId);
+                case 7:
+                    searchTicket();
                     break;
-                }
 
                 case 8:
-                    service.displayAllTickets();
+                    reservationService.displayTickets();
                     break;
 
                 case 9:
-                    service.sortTrainsByName();
+                    System.out.println("Total Bookings: "
+                            + reservationService.getTotalBookings());
                     break;
 
                 case 10:
-                    service.saveData();
-                    break;
-
-                case 0:
-                    service.saveData();
                     running = false;
-                    System.out.println(
-                            "Thank you for using the Railway Reservation System!");
+                    System.out.println("Thank you for using Railway Reservation System!");
                     break;
 
                 default:
-                    System.out.println("Invalid choice. Try again.");
+                    System.out.println("Invalid choice!");
             }
         }
 
         sc.close();
+    }
+
+    // Add Train
+    public static void addTrain() {
+
+        System.out.print("Enter Train Number: ");
+        int number = sc.nextInt();
+        sc.nextLine();
+
+        System.out.print("Enter Train Name: ");
+        String name = sc.nextLine();
+
+        System.out.print("Enter Source: ");
+        String source = sc.nextLine();
+
+        System.out.print("Enter Destination: ");
+        String destination = sc.nextLine();
+
+        System.out.print("Enter Fare: ");
+        double fare = sc.nextDouble();
+
+        Train train = new Train(
+                number, name, source, destination, fare
+        );
+
+        trains.add(train);
+
+        System.out.println("Train added successfully!");
+    }
+
+    // View Trains
+    public static void viewTrains() {
+
+        if (trains.isEmpty()) {
+            System.out.println("No trains available!");
+            return;
+        }
+
+        for (Train train : trains) {
+            System.out.println("\n" + train);
+        }
+    }
+
+    // Register Passenger
+    public static void registerPassenger() {
+
+        System.out.print("Enter Passenger ID: ");
+        int id = sc.nextInt();
+        sc.nextLine();
+
+        System.out.print("Enter Passenger Name: ");
+        String name = sc.nextLine();
+
+        System.out.print("Enter Age: ");
+        int age = sc.nextInt();
+
+        Passenger passenger = new Passenger(id, name, age);
+
+        passengers.add(passenger);
+
+        System.out.println("Passenger registered successfully!");
+    }
+
+    // View Passengers
+    public static void viewPassengers() {
+
+        if (passengers.isEmpty()) {
+            System.out.println("No passengers available!");
+            return;
+        }
+
+        for (Passenger passenger : passengers) {
+            System.out.println("\n" + passenger);
+        }
+    }
+
+    // Book Ticket
+    public static void bookTicket() {
+
+        if (trains.isEmpty() || passengers.isEmpty()) {
+            System.out.println("Please add a train and register a passenger first!");
+            return;
+        }
+
+        viewTrains();
+
+        System.out.print("\nEnter Train Number: ");
+        int trainNumber = sc.nextInt();
+
+        Train selectedTrain = null;
+
+        for (Train train : trains) {
+            if (train.getTrainNumber() == trainNumber) {
+                selectedTrain = train;
+                break;
+            }
+        }
+
+        if (selectedTrain == null) {
+            System.out.println("Train not found!");
+            return;
+        }
+
+        viewPassengers();
+
+        System.out.print("\nEnter Passenger ID: ");
+        int passengerId = sc.nextInt();
+
+        Passenger selectedPassenger = null;
+
+        for (Passenger passenger : passengers) {
+            if (passenger.getPassengerId() == passengerId) {
+                selectedPassenger = passenger;
+                break;
+            }
+        }
+
+        if (selectedPassenger == null) {
+            System.out.println("Passenger not found!");
+            return;
+        }
+
+        System.out.println("\nAvailable Seats:");
+
+        for (int i = 1; i <= 10; i++) {
+
+            String seatNumber = "S" + i;
+
+            if (!selectedTrain.isSeatBooked(seatNumber)) {
+                System.out.print(seatNumber + " ");
+            }
+        }
+
+        System.out.print("\nEnter Seat Number (S1-S10): ");
+        String seatNumber = sc.next().toUpperCase();
+
+        if (!seatNumber.matches("S([1-9]|10)")) {
+            System.out.println("Invalid seat number!");
+            return;
+        }
+
+        if (selectedTrain.isSeatBooked(seatNumber)) {
+            System.out.println("Seat already booked!");
+            return;
+        }
+
+        Seat seat = new Seat(seatNumber);
+
+        reservationService.bookTicket(
+                selectedTrain,
+                selectedPassenger,
+                seat
+        );
+    }
+
+    // Cancel Ticket
+    public static void cancelTicket() {
+
+        System.out.print("Enter Ticket ID: ");
+        int ticketId = sc.nextInt();
+
+        reservationService.cancelTicket(ticketId);
+    }
+
+    // Search Ticket
+    public static void searchTicket() {
+
+        System.out.print("Enter Ticket ID: ");
+        int ticketId = sc.nextInt();
+
+        Ticket ticket = reservationService.searchTicket(ticketId);
+
+        if (ticket != null) {
+            System.out.println(ticket);
+        } else {
+            System.out.println("Ticket not found!");
+        }
     }
 }

@@ -1,263 +1,92 @@
 
-
-
 package com.railway.service;
 
-import com.railway.model.*;
-import com.railway.util.JsonUtil;
+import com.railway.model.Train;
+import com.railway.model.Passenger;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RailwayService {
 
-    private final Map<Integer, Train> trains = new HashMap<>();
-    private final Map<Integer, Passenger> passengers = new HashMap<>();
-    private final List<Ticket> tickets = new ArrayList<>();
+    private List<Train> trains = new ArrayList<>();
+    private List<Passenger> passengers = new ArrayList<>();
 
-    private int nextTicketId = 1;
-
-    // Add train
+    // Add Train
     public void addTrain(Train train) {
         if (train == null) {
-            System.out.println("Train cannot be null.");
+            System.out.println("Invalid train!");
             return;
         }
 
-        trains.put(train.getTrainNumber(), train);
-        System.out.println("Train added successfully.");
+        trains.add(train);
+        System.out.println("Train added successfully!");
     }
 
-    // Find train
-    public Train findTrain(int trainNumber) {
-        return trains.get(trainNumber);
+    // Add Passenger
+    public void addPassenger(Passenger passenger) {
+        if (passenger == null) {
+            System.out.println("Invalid passenger!");
+            return;
+        }
+
+        passengers.add(passenger);
+        System.out.println("Passenger added successfully!");
     }
 
-    // Display all trains
-    public void displayAllTrains() {
+    // Display All Trains
+    public void displayTrains() {
         if (trains.isEmpty()) {
-            System.out.println("No trains available.");
+            System.out.println("No trains available!");
             return;
         }
 
-        for (Train train : trains.values()) {
+        for (Train train : trains) {
             System.out.println(train);
         }
     }
 
-    // Add passenger
-    public void addPassenger(Passenger passenger) {
-        if (passenger == null) {
-            System.out.println("Passenger cannot be null.");
-            return;
-        }
-
-        passengers.put(passenger.getPassengerId(), passenger);
-        System.out.println("Passenger added successfully.");
-    }
-
-    // Find passenger
-    public Passenger findPassenger(int passengerId) {
-        return passengers.get(passengerId);
-    }
-
-    // Display all passengers
-    public void displayAllPassengers() {
+    // Display All Passengers
+    public void displayPassengers() {
         if (passengers.isEmpty()) {
-            System.out.println("No passengers available.");
+            System.out.println("No passengers available!");
             return;
         }
 
-        for (Passenger passenger : passengers.values()) {
+        for (Passenger passenger : passengers) {
             System.out.println(passenger);
         }
     }
 
-    // Book ticket
-    public synchronized void bookTicket(
-            int passengerId,
-            int trainNumber,
-            int seatsBooked,
-            double fare) {
-
-        Passenger passenger = passengers.get(passengerId);
-        Train train = trains.get(trainNumber);
-
-        if (passenger == null) {
-            System.out.println("Passenger not found.");
-            return;
-        }
-
-        if (train == null) {
-            System.out.println("Train not found.");
-            return;
-        }
-
-        if (seatsBooked <= 0 || fare < 0) {
-            System.out.println("Invalid seats or fare.");
-            return;
-        }
-
-        if (seatsBooked > train.getAvailableSeats()) {
-            System.out.println("Not enough available seats.");
-            return;
-        }
-
-        Ticket ticket = new Ticket(
-                nextTicketId++,
-                passenger,
-                train,
-                seatsBooked,
-                fare
-        );
-
-        train.setAvailableSeats(
-                train.getAvailableSeats() - seatsBooked
-        );
-
-        tickets.add(ticket);
-
-        System.out.println("Ticket booked successfully!");
-        System.out.println(ticket);
-    }
-
-    // Cancel ticket
-    public synchronized void cancelTicket(int ticketId) {
-        for (int i = 0; i < tickets.size(); i++) {
-            Ticket ticket = tickets.get(i);
-
-            if (ticket.getTicketId() == ticketId) {
-                Train train = ticket.getTrain();
-
-                if (train != null) {
-                    train.setAvailableSeats(
-                            train.getAvailableSeats()
-                                    + ticket.getSeatsBooked()
-                    );
-                }
-
-                tickets.remove(i);
-                System.out.println("Ticket cancelled successfully.");
-                return;
+    // Find Train
+    public Train findTrain(int trainNumber) {
+        for (Train train : trains) {
+            if (train.getTrainNumber() == trainNumber) {
+                return train;
             }
         }
 
-        System.out.println("Ticket not found.");
+        return null;
     }
 
-    // Display tickets
-    public void displayAllTickets() {
-        if (tickets.isEmpty()) {
-            System.out.println("No tickets available.");
-            return;
-        }
-
-        for (Ticket ticket : tickets) {
-            System.out.println(ticket);
-        }
-    }
-
-    // Sort trains by name
-    public void sortTrainsByName() {
-        List<Train> trainList =
-                new ArrayList<>(trains.values());
-
-        trainList.sort(
-                Comparator.comparing(
-                        Train::getTrainName,
-                        String.CASE_INSENSITIVE_ORDER
-                )
-        );
-
-        System.out.println("\nTrains sorted by name:");
-
-        for (Train train : trainList) {
-            System.out.println(train);
-        }
-    }
-
-    // Save data to JSON files
-    public void saveData() {
-        JsonUtil.save(
-                new ArrayList<>(trains.values()),
-                "trains.json"
-        );
-
-        JsonUtil.save(
-                new ArrayList<>(passengers.values()),
-                "passengers.json"
-        );
-
-        JsonUtil.save(tickets, "tickets.json");
-
-        System.out.println("Railway data saved successfully.");
-    }
-
-    // Load data from JSON files
-    public void loadData() {
-        File trainFile = new File("trains.json");
-        File passengerFile = new File("passengers.json");
-        File ticketFile = new File("tickets.json");
-
-        if (trainFile.exists()) {
-            Train[] savedTrains =
-                    JsonUtil.load("trains.json", Train[].class);
-
-            if (savedTrains != null) {
-                for (Train train : savedTrains) {
-                    trains.put(train.getTrainNumber(), train);
-                }
+    // Find Passenger
+    public Passenger findPassenger(int passengerId) {
+        for (Passenger passenger : passengers) {
+            if (passenger.getPassengerId() == passengerId) {
+                return passenger;
             }
         }
 
-        if (passengerFile.exists()) {
-            Passenger[] savedPassengers =
-                    JsonUtil.load("passengers.json", Passenger[].class);
-
-            if (savedPassengers != null) {
-                for (Passenger passenger : savedPassengers) {
-                    passengers.put(
-                            passenger.getPassengerId(), passenger);
-                }
-            }
-        }
-
-        if (ticketFile.exists()) {
-            Ticket[] savedTickets =
-                    JsonUtil.load("tickets.json", Ticket[].class);
-
-            if (savedTickets != null) {
-                tickets.clear();
-
-                for (Ticket ticket : savedTickets) {
-                    tickets.add(ticket);
-
-                    if (ticket.getTicketId() >= nextTicketId) {
-                        nextTicketId = ticket.getTicketId() + 1;
-                    }
-                }
-            }
-        }
-
-        System.out.println("Railway data loaded successfully.");
+        return null;
     }
 
-    // Get train data
-    public Map<Integer, Train> getTrains() {
-        return trains;
+    // Get All Trains
+    public List<Train> getAllTrains() {
+        return new ArrayList<>(trains);
     }
 
-    // Get passenger data
-    public Map<Integer, Passenger> getPassengers() {
-        return passengers;
-    }
-
-    // Get ticket data
-    public List<Ticket> getTickets() {
-        return tickets;
+    // Get All Passengers
+    public List<Passenger> getAllPassengers() {
+        return new ArrayList<>(passengers);
     }
 }

@@ -1,37 +1,53 @@
 
 package com.railway.model;
 
-import com.railway.util.JsonUtil;
-
 public class TrainTest {
 
     public static void main(String[] args) {
 
-        // Create two train objects
-        Train train1 = new Train(
-            101, "Express", "Hyderabad", "Chennai", 100
+        // Create Train Object
+        Train train = new Train(
+                101,
+                "Express",
+                "Hyderabad",
+                "Chennai",
+                500.0
         );
 
-        Train train2 = new Train(
-            102, "Superfast", "Vijayawada", "Bengaluru", 80
-        );
+        // Display Train Details
+        System.out.println("===== TRAIN DETAILS =====");
+        System.out.println(train);
 
-        // Save the train objects to a JSON file
-        Train[] trains = {train1, train2};
+        // Display Train Fare
+        System.out.println("\nTrain Fare: Rs. " + train.getFare());
 
-        JsonUtil.save(trains, "trains.json");
+        // Book Seats
+        System.out.println("\n===== BOOKING SEATS =====");
 
-        // Load the train objects from the JSON file
-        Train[] loadedTrains =
-            JsonUtil.load("trains.json", Train[].class);
+        train.bookSeat("S1");
+        train.bookSeat("S2");
+        train.bookSeat("S3");
 
-        // Display the loaded trains
-        if (loadedTrains != null) {
-            System.out.println("\nLoaded Train Details:");
+        // Display Booked Seats
+        System.out.println("\nBooked Seats: "
+                + train.getBookedSeats());
 
-            for (Train train : loadedTrains) {
-                System.out.println(train);
-            }
-        }
+        // Check Seat Status
+        System.out.println("\n===== SEAT STATUS =====");
+
+        System.out.println("S1 Booked: "
+                + train.isSeatBooked("S1"));
+
+        System.out.println("S4 Booked: "
+                + train.isSeatBooked("S4"));
+
+        // Cancel Seat
+        System.out.println("\n===== CANCEL SEAT =====");
+
+        train.cancelSeat("S2");
+
+        // Display Final Details
+        System.out.println("\n===== FINAL TRAIN DETAILS =====");
+        System.out.println(train);
     }
 }
